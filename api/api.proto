@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+option go_package = "evaluate/api";
+
+import "google/api/annotations.proto";
+import "gogoproto/gogo.proto";
+
+// blog service is a blog demo
+service BlogService {
+  rpc GetArticles(GetArticlesReq) returns (GetArticlesResp) {
+    option (google.api.http) = {
+      get: "/v1/articles"
+    };
+  }
+
+  rpc CreateArticle(Article) returns (Article) {
+    option (google.api.http) = {
+      post: "/v1/author/{author_id}/articles"
+      body: "*"
+    };
+  }
+  rpc GetArticlePost(Article) returns (Article);
+  rpc Articles(Article) returns (Article);
+  rpc UnionArticle(Article) returns (Article);
+}
+
+message GetArticlesReq {
+  // title名
+  string title = 1 [(gogoproto.jsontag) ="myTitle",(gogoproto.moretags) = "bson:\"label\" bind:\"min:10\""];
+
+  // @inject_tag: form:"page"
+  int32 page = 2;
+
+  // @inject_tag: form:"page_size"
+  int32 page_size = 3;
+
+  // @inject_tag: form:"author_id" uri:"author_id"
+  int32 author_id = 4;
+}
+
+message GetArticlesResp {
+  int64 total = 1;
+  repeated Article articles = 2;
+}
+
+message Article {
+  string title  = 1;
+  string content = 2;
+  // @inject_tag: form:"author_id" uri:"author_id"
+  int32 author_id = 3;
+  string AaaT =4;
+}

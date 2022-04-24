@@ -1,0 +1,467 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: ""
+    version: 0.0.1
+paths:
+    /api/models/evaluate:
+        get:
+            tags:
+                - EvaluateService
+            description: 评测任务列表
+            operationId: EvaluateService_ListTask
+            parameters:
+                - name: page
+                  in: query
+                  description: 页数
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: query
+                  description: 页大小
+                  schema:
+                    type: integer
+                    format: int32
+                - name: caseType
+                  in: query
+                  description: case类型
+                  schema:
+                    type: integer
+                    format: int32
+                - name: name
+                  in: query
+                  description: 任务名
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListTaskResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - EvaluateService
+            description: 创建评测任务
+            operationId: EvaluateService_CreateTask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateTaskRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateTaskResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /api/models/evaluate/{taskID}:
+        get:
+            tags:
+                - EvaluateService
+            description: 评测任务详情
+            operationId: EvaluateService_GetTask
+            parameters:
+                - name: taskID
+                  in: path
+                  description: 任务ID
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetTaskResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - EvaluateService
+            description: 重试任务
+            operationId: EvaluateService_RetryTask
+            parameters:
+                - name: taskID
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RetryTaskRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Empty'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - EvaluateService
+            description: 删除评测任务
+            operationId: EvaluateService_DeleteTask
+            parameters:
+                - name: taskID
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Empty'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/articles:
+        get:
+            tags:
+                - BlogService
+            operationId: BlogService_GetArticles
+            parameters:
+                - name: title
+                  in: query
+                  description: title名
+                  schema:
+                    type: string
+                - name: page
+                  in: query
+                  description: '@inject_tag: form:"page"'
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: query
+                  description: '@inject_tag: form:"page_size"'
+                  schema:
+                    type: integer
+                    format: int32
+                - name: authorId
+                  in: query
+                  description: '@inject_tag: form:"author_id" uri:"author_id"'
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetArticlesResp'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/author/{authorId}/articles:
+        post:
+            tags:
+                - BlogService
+            operationId: BlogService_CreateArticle
+            parameters:
+                - name: authorId
+                  in: path
+                  description: '@inject_tag: form:"author_id" uri:"author_id"'
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Article'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Article'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+components:
+    schemas:
+        Article:
+            type: object
+            properties:
+                title:
+                    type: string
+                content:
+                    type: string
+                authorId:
+                    type: integer
+                    description: '@inject_tag: form:"author_id" uri:"author_id"'
+                    format: int32
+        CancelTaskRequest:
+            type: object
+            properties:
+                taskID:
+                    type: string
+        CreateTaskRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: 任务名称
+                caseType:
+                    type: integer
+                    description: case类型
+                    format: int32
+                members:
+                    type: array
+                    items:
+                        type: string
+                    description: 评测人员
+                desc:
+                    type: string
+                    description: 描述
+                modelType:
+                    type: integer
+                    description: 模型类型
+                    format: int32
+                modelID:
+                    type: string
+                    description: 模型ID
+                datasetID:
+                    type: string
+                    description: 数据集ID
+                gpuNum:
+                    type: integer
+                    description: gpu数量
+                    format: int32
+                evaluateType:
+                    type: integer
+                    description: 评测类型
+                    format: int32
+        CreateTaskResponse:
+            type: object
+            properties:
+                id:
+                    type: string
+                    description: 任务ID
+        Empty:
+            type: object
+            properties: {}
+        GetArticlesResp:
+            type: object
+            properties:
+                total:
+                    type: integer
+                    format: int64
+                articles:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Article'
+        GetTaskResponse:
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: 任务名
+                caseType:
+                    type: integer
+                    description: case类型
+                    format: int32
+                members:
+                    type: array
+                    items:
+                        type: string
+                    description: 评测人员
+                desc:
+                    type: string
+                    description: 描述
+                modelType:
+                    type: integer
+                    description: 模型类型
+                    format: int32
+                modelID:
+                    type: string
+                    description: 模型ID
+                datasetID:
+                    type: string
+                    description: 数据集ID
+                gpuNum:
+                    type: integer
+                    description: gpu数量
+                    format: int32
+                evaluateType:
+                    type: integer
+                    description: 评测类型
+                    format: int32
+                status:
+                    type: integer
+                    description: 状态
+                    format: int32
+                result:
+                    type: string
+                    description: 评测结果
+                runningAt:
+                    type: integer
+                    description: 运行开始时间
+                    format: int64
+                finishedAt:
+                    type: integer
+                    description: 结束时间
+                    format: int64
+                progress:
+                    type: integer
+                    description: 进度
+                    format: int32
+                modelName:
+                    type: string
+                    description: 模型名称
+                datasetName:
+                    type: string
+                    description: 数据集名称
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        ListTaskResponse:
+            type: object
+            properties:
+                total:
+                    type: integer
+                    format: int64
+                list:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/TaskItem'
+        RetryTaskRequest:
+            type: object
+            properties:
+                taskID:
+                    type: string
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        TaskItem:
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: 任务名
+                caseType:
+                    type: integer
+                    description: case类型
+                    format: int32
+                members:
+                    type: array
+                    items:
+                        type: string
+                    description: 评测人员
+                desc:
+                    type: string
+                    description: 描述
+                modelType:
+                    type: integer
+                    description: 模型类型
+                    format: int32
+                gpuNum:
+                    type: integer
+                    description: gpu数量
+                    format: int32
+                evaluateType:
+                    type: integer
+                    description: 评测类型
+                    format: int32
+                modelName:
+                    type: string
+                    description: 模型名称
+                status:
+                    type: integer
+                    description: 状态
+                    format: int32
+                datasetName:
+                    type: string
+                    description: 数据集名称
+                progress:
+                    type: integer
+                    description: 进度
+                    format: int32
+        UpdateTaskRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: 任务名
+                members:
+                    type: array
+                    items:
+                        type: string
+                    description: 评测人员
+                desc:
+                    type: string
+                    description: 描述
+                taskID:
+                    type: string
+                    description: 任务ID
+tags:
+    - name: BlogService
+      description: blog service is a blog demo
+    - name: EvaluateService

@@ -1,0 +1,188 @@
+syntax = "proto3";
+package api;
+
+option go_package="evaluate/api";
+
+import "google/api/annotations.proto";
+import "gogoproto/gogo.proto";
+
+service EvaluateService {
+  // 创建评测任务
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse){
+    option(google.api.http) ={
+      post: "/api/models/evaluate"
+      body: "*"
+    };
+  }
+  // 评测任务列表
+  rpc ListTask(ListTaskRequest) returns (ListTaskResponse){
+    option(google.api.http) ={
+      get: "/api/models/evaluate"
+    };
+  }
+  // 评测任务详情
+  rpc GetTask(GetTaskRequest) returns (GetTaskResponse){
+    option(google.api.http) ={
+      get: "/api/models/evaluate/{taskID}"
+    };
+  }
+  // 更新评测任务
+  rpc UpdateTask(UpdateTaskRequest) returns(Empty){
+    option(google.api.http) ={
+      post: "/api/models/evaluate/{taskID}"
+      body: "*"
+    };
+  }
+  // 删除评测任务
+  rpc DeleteTask(DeleteTaskRequest) returns(Empty){
+    option(google.api.http) ={
+      delete: "/api/models/evaluate/{taskID}"
+    };
+  }
+  // 取消评测任务
+  rpc CancelTask(CancelTaskRequest) returns(Empty){
+    option(google.api.http) ={
+      post: "/api/models/evaluate/{taskID}"
+      body: "*"
+    };
+  }
+  // 重试任务
+  rpc RetryTask(RetryTaskRequest) returns(Empty){
+    option(google.api.http) ={
+      post: "/api/models/evaluate/{taskID}"
+      body: "*"
+    };
+  }
+}
+
+message CreateTaskRequest {
+  // 任务名称
+  string name=1;
+  // case类型
+  int32 caseType =2;
+  // 评测人员
+  repeated string members =3;
+  // 描述
+  string desc =4;
+  // 模型类型
+  int32 modelType =5;
+  // 模型ID
+  string modelID =6;
+  // 数据集ID
+  string datasetID =7;
+  // gpu数量
+  int32 gpuNum =8;
+  // 评测类型
+  int32 evaluateType =9;
+}
+
+message CreateTaskResponse{
+  // 任务ID
+  string id =1;
+}
+
+message ListTaskRequest {
+  // 页数
+  int32 page =1;
+  // 页大小
+  int32 pageSize =2;
+  // case类型
+  int32 caseType =3;
+  // 任务名
+  string name =4;
+}
+
+message ListTaskResponse{
+  int64 total =1;
+  repeated TaskItem list=2;
+}
+
+message TaskItem{
+  // 任务名
+  string name =1;
+  // case类型
+  int32 caseType =2;
+  // 评测人员
+  repeated string members =3;
+  // 描述
+  string desc =4;
+  // 模型类型
+  int32 modelType =5;
+  // gpu数量
+  int32 gpuNum =8;
+  // 评测类型
+  int32 evaluateType =9;
+  // 模型名称
+  string modelName =10;
+  // 状态
+  int32 status=11;
+  // 数据集名称
+  string datasetName =12;
+  // 进度
+  int32 progress =13;
+}
+
+message GetTaskRequest{
+  // 任务ID
+  string taskID =1;
+}
+
+message GetTaskResponse{
+  // 任务名
+  string name=1;
+  // case类型
+  int32 caseType =2;
+  // 评测人员
+  repeated string members =3;
+  // 描述
+  string desc =4;
+  // 模型类型
+  int32 modelType =5;
+  // 模型ID
+  string modelID =6;
+  // 数据集ID
+  string datasetID =7;
+  // gpu数量
+  int32 gpuNum =8;
+  // 评测类型
+  int32 evaluateType =9;
+  // 状态
+  int32 status=10;
+  // 评测结果
+  string result =11;
+  // 运行开始时间
+  int64 runningAt =12;
+  // 结束时间
+  int64 finishedAt =13;
+  // 进度
+  int32 progress =14;
+  // 模型名称
+  string modelName =15;
+  // 数据集名称
+  string datasetName =16;
+}
+
+message UpdateTaskRequest {
+  // 任务名
+  string name =1;
+  // 评测人员
+  repeated string members =2;
+  // 描述
+  string desc =3;
+  // 任务ID
+  string taskID =4;
+}
+
+message Empty{}
+
+message DeleteTaskRequest{
+  string taskID =1;
+}
+
+message CancelTaskRequest{
+  string taskID =1;
+}
+
+message RetryTaskRequest{
+  string taskID =1;
+}
