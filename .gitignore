@@ -1,0 +1,4 @@
+.idea/
+*.swagger.json
+*.yaml
+.DS_Store
