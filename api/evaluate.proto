@@ -5,6 +5,7 @@ option go_package="evaluate/api";
 
 import "google/api/annotations.proto";
 import "gogoproto/gogo.proto";
+import "google/protobuf/wrappers.proto";
 
 service EvaluateService {
   // 创建评测任务
@@ -42,38 +43,56 @@ service EvaluateService {
   // 取消评测任务
   rpc CancelTask(CancelTaskRequest) returns(Empty){
     option(google.api.http) ={
-      post: "/api/models/evaluate/{taskID}"
+      post: "/api/models/evaluate/{taskID}/_cancel"
       body: "*"
     };
   }
   // 重试任务
   rpc RetryTask(RetryTaskRequest) returns(Empty){
     option(google.api.http) ={
-      post: "/api/models/evaluate/{taskID}"
+      post: "/api/models/evaluate/{taskID}/_rerun"
       body: "*"
+    };
+  }
+  // 文件列表
+  rpc ListImage(ListImageRequest) returns(ListImageResponse){
+    option(google.api.http) ={
+      get: "/api/models/evaluate/{taskID}/image"
+    };
+  }
+  // 查看日志
+  rpc ListLog(ListLogRequest) returns(ListLogResponse){
+    option(google.api.http) ={
+      get: "/api/models/evaluate/{taskID}/log"
+    };
+  }
+  // 日志下载
+  rpc DownloadLog(DownloadLogRequest) returns(DownloadLogResponse){
+    option(google.api.http) ={
+      get: "/api/models/evaluate/{taskID}/downloadLog"
     };
   }
 }
 
 message CreateTaskRequest {
   // 任务名称
-  string name=1;
+  string name=1 [(gogoproto.moretags)="binding:\"required,max=50\""];
   // case类型
-  int32 caseType =2;
+  int32 caseType =2 [(gogoproto.moretags)="binding:\"required\""];
   // 评测人员
   repeated string members =3;
   // 描述
-  string desc =4;
+  string desc =4 [(gogoproto.moretags)="binding:\"max=140\""];
   // 模型类型
   int32 modelType =5;
   // 模型ID
-  string modelID =6;
+  string modelID =6 [(gogoproto.moretags)="binding:\"required\""];
   // 数据集ID
-  string datasetID =7;
+  string datasetID =7 [(gogoproto.moretags)="binding:\"required\""];
   // gpu数量
-  int32 gpuNum =8;
+  int32 gpuNum =8 [(gogoproto.moretags)="binding:\"required\""];
   // 评测类型
-  int32 evaluateType =9;
+  int32 evaluateType =9 [(gogoproto.moretags)="binding:\"required\""];
 }
 
 message CreateTaskResponse{
@@ -87,102 +106,159 @@ message ListTaskRequest {
   // 页大小
   int32 pageSize =2;
   // case类型
-  int32 caseType =3;
+  google.protobuf.Int32Value caseType = 3 [(gogoproto.wktpointer) = true];
   // 任务名
   string name =4;
 }
 
 message ListTaskResponse{
-  int64 total =1;
-  repeated TaskItem list=2;
+  int64 total =1 [(gogoproto.jsontag)="total"];
+  repeated TaskItem list=2 [(gogoproto.jsontag)="list"];
 }
 
 message TaskItem{
   // 任务名
-  string name =1;
+  string name =1 [(gogoproto.jsontag)="total"];
   // case类型
-  int32 caseType =2;
+  int32 caseType =2 [(gogoproto.jsontag)="caseType"];
   // 评测人员
-  repeated string members =3;
+  repeated string members =3 [(gogoproto.jsontag)="members"];
   // 描述
-  string desc =4;
+  string desc =4 [(gogoproto.jsontag)="desc"];
   // 模型类型
-  int32 modelType =5;
+  int32 modelType =5 [(gogoproto.jsontag)="modelType"];
   // gpu数量
-  int32 gpuNum =8;
+  int32 gpuNum =8 [(gogoproto.jsontag)="gpuNum"];
   // 评测类型
-  int32 evaluateType =9;
+  int32 evaluateType =9 [(gogoproto.jsontag)="evaluateType"];
   // 模型名称
-  string modelName =10;
+  string modelName =10 [(gogoproto.jsontag)="modelName"];
   // 状态
-  int32 status=11;
+  int32 status=11 [(gogoproto.jsontag)="status"];
   // 数据集名称
-  string datasetName =12;
+  string datasetName =12 [(gogoproto.jsontag)="datasetName"];
   // 进度
-  int32 progress =13;
+  int32 progress =13 [(gogoproto.jsontag)="progress"];
 }
 
 message GetTaskRequest{
   // 任务ID
-  string taskID =1;
+  string taskID =1 [(gogoproto.moretags)="uri:\"taskID\" binding:\"required\""];
 }
 
 message GetTaskResponse{
   // 任务名
-  string name=1;
+  string name=1 [(gogoproto.jsontag)="name"];
   // case类型
-  int32 caseType =2;
+  int32 caseType =2 [(gogoproto.jsontag)="caseType"];
   // 评测人员
-  repeated string members =3;
+  repeated string members =3 [(gogoproto.jsontag)="members"];
   // 描述
-  string desc =4;
+  string desc =4 [(gogoproto.jsontag)="desc"];
   // 模型类型
-  int32 modelType =5;
+  int32 modelType =5 [(gogoproto.jsontag)="modelType"];
   // 模型ID
-  string modelID =6;
+  string modelID =6 [(gogoproto.jsontag)="modelID"];
   // 数据集ID
-  string datasetID =7;
+  string datasetID =7 [(gogoproto.jsontag)="datasetID"];
   // gpu数量
-  int32 gpuNum =8;
+  int32 gpuNum =8 [(gogoproto.jsontag)="gpuNum"];
   // 评测类型
-  int32 evaluateType =9;
+  int32 evaluateType =9 [(gogoproto.jsontag)="evaluateType"];
   // 状态
-  int32 status=10;
+  int32 status=10 [(gogoproto.jsontag)="status"];
   // 评测结果
-  string result =11;
+  string result =11 [(gogoproto.jsontag)="result"];
   // 运行开始时间
-  int64 runningAt =12;
+  int64 runningAt =12 [(gogoproto.jsontag)="runningAt"];
   // 结束时间
-  int64 finishedAt =13;
+  int64 finishedAt =13 [(gogoproto.jsontag)="finishedAt"];
   // 进度
-  int32 progress =14;
+  int32 progress =14 [(gogoproto.jsontag)="progress"];
   // 模型名称
-  string modelName =15;
+  string modelName =15 [(gogoproto.jsontag)="modelName"];
   // 数据集名称
-  string datasetName =16;
+  string datasetName =16 [(gogoproto.jsontag)="datasetName"];
 }
 
 message UpdateTaskRequest {
   // 任务名
-  string name =1;
+  string name =1 [(gogoproto.moretags)="binding:\"max=50\""];
   // 评测人员
   repeated string members =2;
   // 描述
-  string desc =3;
+  string desc =3 [(gogoproto.moretags)="binding:\"max=140\""];
   // 任务ID
-  string taskID =4;
+  string taskID =4 [(gogoproto.moretags)="uri:\"taskID\" binding:\"required\""];
 }
 
 message Empty{}
 
 message DeleteTaskRequest{
-  string taskID =1;
+  string taskID =1 [(gogoproto.moretags)="uri:\"taskID\" binding:\"required\""];
 }
 
 message CancelTaskRequest{
-  string taskID =1;
+  string taskID =1 [(gogoproto.moretags)="uri:\"taskID\" binding:\"required\""];
 }
 
 message RetryTaskRequest{
-  string taskID =1;
+  string taskID =1 [(gogoproto.moretags)="uri:\"taskID\" binding:\"required\""];
+}
+
+message ListImageRequest{
+  // 页数
+  int32 page =1;
+  // 页大小
+  int32 pageSize =2;
+  // recall高值
+  int32 recallHigh =3;
+  // recall低值
+  int32 recallLow =4;
+  // precision高值
+  int32 precisionHigh =5;
+  // precision低值
+  int32 precisionLow =6;
+  // 任务ID
+  string taskID =7 [(gogoproto.moretags)="uri:\"taskID\" binding:\"required\""];
+}
+
+message ListImageResponse{
+  int64 total =1 [(gogoproto.jsontag)="total"];
+  repeated ImageItem list =2 [(gogoproto.jsontag)="list"];
+}
+
+message ImageItem {
+  // 文件结果
+  string result =1 [(gogoproto.jsontag)="result"];
+}
+
+message ListLogRequest{
+  // 页数
+  int32 page =1;
+  // 页大小
+  int32 pageSize =2;
+  // process
+  int32 process =3;
+  // 任务ID
+  string taskID =4 [(gogoproto.moretags)="uri:\"taskID\" binding:\"required\""];
+}
+
+message ListLogResponse{
+  int64 total =1 [(gogoproto.jsontag)="total"];
+  repeated LogItem list =2 [(gogoproto.jsontag)="list"];
+}
+
+message LogItem{
+  int64 date =1 [(gogoproto.jsontag)="date"];
+  string content =2 [(gogoproto.jsontag)="content"];
+}
+
+message DownloadLogRequest{
+  // 任务ID
+  string taskID =1 [(gogoproto.moretags)="uri:\"taskID\" binding:\"required\""];
+}
+
+message DownloadLogResponse{
+
 }

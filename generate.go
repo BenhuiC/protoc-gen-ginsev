@@ -100,7 +100,7 @@ func getMethod(sev *protogen.Service, m *protogen.Method, rule *annotations.Http
 	// turn {key} to :key
 	paths := strings.Split(path, "/")
 	for i, p := range paths {
-		if strings.HasPrefix(p, "{") && strings.HasSuffix(path, "}") {
+		if strings.HasPrefix(p, "{") && strings.HasSuffix(p, "}") {
 			paths[i] = ":" + p[1:len(p)-1]
 		}
 	}

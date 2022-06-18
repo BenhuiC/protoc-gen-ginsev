@@ -4,6 +4,7 @@ option go_package = "evaluate/api";
 
 import "google/api/annotations.proto";
 import "gogoproto/gogo.proto";
+import "google/protobuf/wrappers.proto";
 
 // blog service is a blog demo
 service BlogService {
@@ -39,7 +40,7 @@ message GetArticlesReq {
 }
 
 message GetArticlesResp {
-  int64 total = 1;
+  google.protobuf.Int32Value total = 1 [(gogoproto.wktpointer) = true];
   repeated Article articles = 2;
 }
 
